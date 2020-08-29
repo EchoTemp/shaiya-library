@@ -6,7 +6,8 @@ A simple library that is intended to be distributed as a statically linked DLL, 
 - Ep6 item set synergies
 
 ## Planned features
-- Ep8 support
+- Full item mall support via packet intercepting
+- Ep8 support via packet rewriting
 - Support for an external REST API
 - Lua content scripting
 
