@@ -2,6 +2,7 @@
 #include <shaiya/utils/csv.hpp>
 #include <logging/log.hpp>
 
+#include <set>
 #include <vector>
 
 /**

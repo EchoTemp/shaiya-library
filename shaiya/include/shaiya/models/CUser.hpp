@@ -1,9 +1,10 @@
 #pragma once
+
 #include <shaiya/models/Model.hpp>
 #include <shaiya/models/CItem.hpp>
 
 #include <array>
-#include <set>
+#include <string>
 
 /**
  * CUser likely stands for character user. This represents an active character instance
@@ -73,5 +74,17 @@ struct CUser
     unsigned int hitpoints;
     unsigned int mana;
     unsigned int stamina;
+
+    /**
+     * Sends a notice message to this user.
+     * @param message   The message to send.
+     */
+    void sendNotice(const std::string& message);
+
+    /**
+     * Sends the user their Aeria Points.
+     */
+    void sendPoints();
+
 };
 #pragma pack(pop)

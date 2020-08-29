@@ -1,7 +1,6 @@
 #include <shaiya/World.hpp>
 #include <shaiya/utils/Hook.hpp>
 
-#include <shaiya/models/CUser.hpp>
 #include <shaiya/hooks/character/ItemSetSynergy.hpp>
 
 /**
@@ -127,7 +126,7 @@ void __declspec(naked) itemEquipmentRemovedHook()
  */
 void userEnterWorld(CUser* user)
 {
-    ItemSetSynergy::applyWornSynergies(user);
+    World::registerUser(user);
     originalCUserEnterWorld(user);
 }
 
@@ -137,7 +136,7 @@ void userEnterWorld(CUser* user)
  */
 void __stdcall userLeaveWorld(CUser* user)
 {
-    ItemSetSynergy::removeSynergies(user);
+    World::deregisterUser(user);
     originalCUserLeaveWorld(user);
 }
 
@@ -156,4 +155,8 @@ template <> void World::hook<HookType::Character>()
     // Load the equipment hooks
     memory(ItemEquipmentAddEntry, 6, (DWORD) itemEquipmentAddedHook);
     memory(ItemEquipmentRemEntry, 6, (DWORD) itemEquipmentRemovedHook);
+
+    // Perform the synergy application and remove when the user enters and leaves the game world
+    World::onUserRegistered(ItemSetSynergy::applyWornSynergies);
+    World::onUserDeregistered(ItemSetSynergy::removeSynergies);
 }
