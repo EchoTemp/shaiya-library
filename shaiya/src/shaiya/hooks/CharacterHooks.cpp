@@ -143,20 +143,24 @@ void __stdcall userLeaveWorld(CUser* user)
 /**
  * Initialises the character specific hooks.
  */
-template <> void World::hook<HookType::Character>()
+template <> void World::hook<HookType::Character>(const toml::table& config)
 {
-    // Load the item synergies
-    ItemSetSynergy::parse("Data/setitem.csv");
-
     // Load the user enter/leave hooks
     originalCUserEnterWorld = (CUserEnterWorldFunc) memory(CUserEnterWorld, 6, (DWORD) userEnterWorld);
     originalCUserLeaveWorld = (CUserLeaveWorldFunc) memory(CUserLeaveWorld, 8, (DWORD) userLeaveWorld);
 
-    // Load the equipment hooks
-    memory(ItemEquipmentAddEntry, 6, (DWORD) itemEquipmentAddedHook);
-    memory(ItemEquipmentRemEntry, 6, (DWORD) itemEquipmentRemovedHook);
+    // If the synergy feature is enabled, load it
+    auto synergyEnabled = config["features"]["synergy"].value_or(false);
+    if (synergyEnabled) {
+        // Load the item synergies
+        ItemSetSynergy::parse("Data/setitem.csv");
 
-    // Perform the synergy application and remove when the user enters and leaves the game world
-    World::onUserRegistered(ItemSetSynergy::applyWornSynergies);
-    World::onUserDeregistered(ItemSetSynergy::removeSynergies);
+        // Load the equipment hooks
+        memory(ItemEquipmentAddEntry, 6, (DWORD) itemEquipmentAddedHook);
+        memory(ItemEquipmentRemEntry, 6, (DWORD) itemEquipmentRemovedHook);
+
+        // Perform the synergy application and remove when the user enters and leaves the game world
+        World::onUserRegistered(ItemSetSynergy::applyWornSynergies);
+        World::onUserDeregistered(ItemSetSynergy::removeSynergies);
+    }
 }

@@ -1,4 +1,5 @@
 #include <shaiya/World.hpp>
+#include <shaiya/utils/toml.hpp>
 
 #include <iomanip>
 
@@ -30,17 +31,18 @@ SConnectionSendFunc sConnectionSend = (SConnectionSendFunc) SConnectionSendAddre
 /**
  * Initialises the Shaiya game world mod by setting up various
  * function hooks to add our custom functionality.
+ * @param config    The configuration table
  */
-void World::init()
+void World::init(const toml::table& config)
 {
     // Initialise the custom memory block
     LOG(INFO) << "Populating memory at 0x" << std::uppercase << std::hex << CUPS_MEMORY_BLOCK;
     *((int*) CUPS_MEMORY_BLOCK) = (int) new Cups();
 
     // Initialise the hooks
-    LOG(INFO) << "Initialising world hooks...";
-    hook<HookType::World>();
-    hook<HookType::Character>();
+    LOG(INFO) << "Initialising hooks...";
+    hook<HookType::World>(config);
+    hook<HookType::Character>(config);
 }
 
 /**

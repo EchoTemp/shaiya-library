@@ -2,6 +2,7 @@
 
 #include <shaiya/HookType.hpp>
 #include <shaiya/models/cups/Cups.hpp>
+#include <shaiya/utils/toml.hpp>
 
 #include <logging/log.hpp>
 
@@ -21,8 +22,9 @@ public:
 
     /**
      * Initialises the Shaiya server mod.
+     * @param config    The configuration table
      */
-    static void init();
+    static void init(const toml::table& config);
 
     /**
      * Gets executed when a user is registered to the game world.
@@ -78,7 +80,7 @@ private:
      * @tparam type The hook type.
      */
     template<HookType type>
-    static void hook();
+    static void hook(const toml::table& config);
 
     /**
      * A vector of functions that gets executed when the user is registered to the game world.
