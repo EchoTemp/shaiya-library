@@ -23,7 +23,7 @@ std::map<CUser*, std::vector<Craftname>> ItemSetSynergy::appliedSynergies;
 void ItemSetSynergy::parse(const std::string& path)
 {
     // Parse the synergy file
-    auto config = toml::parse_file("Data/Synergies.toml");
+    auto config = toml::parse_file(path);
     auto sets = config["set"].as_table();
 
     // Loop through all of the sets

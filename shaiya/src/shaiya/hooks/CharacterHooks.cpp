@@ -153,7 +153,7 @@ template <> void World::hook<HookType::Character>(const toml::table& config)
     auto synergyEnabled = config["features"]["synergy"].value_or(false);
     if (synergyEnabled) {
         // Load the item synergies
-        ItemSetSynergy::parse("Data/setitem.csv");
+        ItemSetSynergy::parse("Data/Synergies.toml");
 
         // Load the equipment hooks
         memory(ItemEquipmentAddEntry, 6, (DWORD) itemEquipmentAddedHook);
