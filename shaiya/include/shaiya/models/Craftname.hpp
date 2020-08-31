@@ -1,17 +1,19 @@
 #pragma once
 
+#include <cstdint>
+
 /**
  * Represents a craftname
  */
 struct Craftname
 {
-    size_t strength { 0 };
-    size_t dexterity { 0 };
-    size_t resistance { 0 };
-    size_t wisdom { 0 };
-    size_t intelligence { 0 };
-    size_t luck { 0 };
-    size_t hitpoints { 0 };
-    size_t mana { 0 };
-    size_t stamina { 0 };
+    int32_t strength { 0 };
+    int32_t dexterity { 0 };
+    int32_t resistance { 0 };
+    int32_t intelligence { 0 };
+    int32_t wisdom { 0 };
+    int32_t luck { 0 };
+    int32_t hitpoints { 0 };
+    int32_t mana { 0 };
+    int32_t stamina { 0 };
 };

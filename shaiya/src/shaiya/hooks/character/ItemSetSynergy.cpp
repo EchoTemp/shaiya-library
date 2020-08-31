@@ -1,9 +1,10 @@
 #include <shaiya/hooks/character/ItemSetSynergy.hpp>
-#include <shaiya/utils/csv.hpp>
+#include <shaiya/utils/toml.hpp>
 #include <logging/log.hpp>
 
 #include <set>
 #include <vector>
+#include <Shlwapi.h>
 
 /**
  * Initialise the item synergies.
@@ -21,80 +22,58 @@ std::map<CUser*, std::vector<Craftname>> ItemSetSynergy::appliedSynergies;
  */
 void ItemSetSynergy::parse(const std::string& path)
 {
-    io::CSVReader<28> csv(path);
-    csv.read_header(io::ignore_extra_column, "Setid", "setName", "Itemid_1", "Pieces1_value", "Itemid_2", "Pieces2_value", "Itemid_3", "Pieces3_value", "Itemid_4", "Pieces4_value", "Itemid_5", "Pieces5_value", "Itemid_6", "Pieces6_value", "Itemid_7", "Pieces7_value", "Itemid_8", "Pieces8_value", "Itemid_9", "Pieces9_value", "Itemid_10", "Pieces10_value", "Itemid_11", "Pieces11_value", "Itemid_12", "Pieces12_value", "Itemid_13", "Pieces13_value");
+    // Parse the synergy file
+    auto config = toml::parse_file("Data/Synergies.toml");
+    auto sets = config["set"].as_table();
 
-    // The row values
-    size_t setId;
-    std::string setName;
-    size_t firstItem;
-    std::string firstValue;
-    size_t secondItem;
-    std::string secondValue;
-    size_t thirdItem;
-    std::string thirdValue;
-    size_t fourthItem;
-    std::string fourthValue;
-    size_t fifthItem;
-    std::string fifthValue;
-    size_t sixthItem;
-    std::string sixthValue;
-    size_t seventhItem;
-    std::string seventhValue;
-    size_t eighthItem;
-    std::string eighthValue;
-    size_t ninthItem;
-    std::string ninthValue;
-    size_t tenthItem;
-    std::string tenthValue;
-    size_t eleventhItem;
-    std::string eleventhValue;
-    size_t twelfthItem;
-    std::string twelfthValue;
-    size_t thirteenthItem;
-    std::string thirteenthValue;
-
-    // Read the rows
-    while (csv.read_row(setId, setName, firstItem, firstValue, secondItem, secondValue, thirdItem, thirdValue, fourthItem, fourthValue, fifthItem, fifthValue, sixthItem, sixthValue, seventhItem, seventhValue, eighthItem, eighthValue, ninthItem, ninthValue, tenthItem, tenthValue, eleventhItem, eleventhValue, twelfthItem, twelfthValue, thirteenthItem, thirteenthValue))
+    // Loop through all of the sets
+    for (auto&& set: *sets)
     {
-        // Create the synergy structure
-        Synergy synergy { .id = setId, .name = setName };
+        auto data = *set.second.as_table();
+        auto name = data["name"].value_or("Undefined");
+        auto items = data["items"].as_array();
 
-        // Store the item ids
-        auto& items = synergy.items;
-        items[0] = firstItem;
-        items[1] = secondItem;
-        items[2] = thirdItem;
-        items[3] = fourthItem;
-        items[4] = fifthItem;
-        items[5] = sixthItem;
-        items[6] = seventhItem;
-        items[7] = eighthItem;
-        items[8] = ninthItem;
-        items[9] = tenthItem;
-        items[10] = eleventhItem;
-        items[11] = twelfthItem;
-        items[12] = thirteenthItem;
+        // Assign the set name and worn items
+        Synergy synergy { .name = name };
+        for (auto i = 0; i < items->size(); i++)
+            synergy.items[i] = (*items->get(i)->as_integer()).get();
 
-        // Store the bonus craftnames
-        auto& craftnames = synergy.bonuses;
-        craftnames[0]   = parseCraftname(firstValue);
-        craftnames[1]   = parseCraftname(secondValue);
-        craftnames[2]   = parseCraftname(thirdValue);
-        craftnames[3]   = parseCraftname(fourthValue);
-        craftnames[4]   = parseCraftname(fifthValue);
-        craftnames[5]   = parseCraftname(sixthValue);
-        craftnames[6]   = parseCraftname(seventhValue);
-        craftnames[7]   = parseCraftname(eighthValue);
-        craftnames[8]   = parseCraftname(ninthValue);
-        craftnames[9]   = parseCraftname(tenthValue);
-        craftnames[10]  = parseCraftname(eleventhValue);
-        craftnames[11]  = parseCraftname(twelfthValue);
-        craftnames[12]  = parseCraftname(thirteenthValue);
+        // Loop through any worn bonus tables
+        for (auto bonus = data.begin(); bonus != data.end(); bonus++)
+        {
+            int32_t wornCount;
+            if (StrToIntEx(bonus->first.c_str(), STIF_SUPPORT_HEX, &wornCount))
+            {
+                auto bonuses = *bonus->second.as_table();
 
-        // Store the synergy
+                // Parse the bonus status
+                auto strength       = bonuses["str"].value_or(0);
+                auto dexterity      = bonuses["dex"].value_or(0);
+                auto resistance     = bonuses["rec"].value_or(0);
+                auto intelligence   = bonuses["int"].value_or(0);
+                auto wisdom         = bonuses["wis"].value_or(0);
+                auto luck           = bonuses["luc"].value_or(0);
+                auto hitpoints      = bonuses["hp"].value_or(0);
+                auto mana           = bonuses["mp"].value_or(0);
+                auto stamina        = bonuses["sp"].value_or(0);
+                synergy.bonuses[wornCount - 1] = Craftname
+                        {
+                            .strength       = strength,
+                            .dexterity      = dexterity,
+                            .resistance     = resistance,
+                            .intelligence   = intelligence,
+                            .wisdom         = wisdom,
+                            .luck           = luck,
+                            .hitpoints      = hitpoints,
+                            .mana           = mana,
+                            .stamina        = stamina
+                        };
+            }
+        }
+
+        // Add the synergy set
         synergies.push_back(synergy);
-        LOG(INFO) << "Loaded synergy set: " << setName;
+        LOG(INFO) << "Loaded synergy set: " << synergy.name;
     }
     LOG(INFO) << "Successfully loaded " << synergies.size() << " synergy sets.";
 }

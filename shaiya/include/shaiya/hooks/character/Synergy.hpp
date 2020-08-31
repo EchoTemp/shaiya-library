@@ -16,11 +16,6 @@ struct Synergy
 {
 
     /**
-     * The id of the synergy.
-     */
-    size_t id { 0 };
-
-    /**
      * The name of the set
      */
     std::string name { "Undefined" };
