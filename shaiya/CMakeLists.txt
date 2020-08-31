@@ -18,5 +18,9 @@ set_target_properties(shaiya PROPERTIES LINKER_LANGUAGE CXX)
 # Define the MSVC library runtime to use
 set_property(TARGET shaiya PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
 
+# Link the library
+target_link_libraries(shaiya
+        Shlwapi.lib)
+
 # Add custom definitions
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
