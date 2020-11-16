@@ -1,0 +1,11 @@
+[combination.test]
+first = 10065
+second = 10065
+third = 10065
+result = 40255
+
+[combination.spears]
+first = 6001
+second = 6002
+third = 6035
+result = 6178

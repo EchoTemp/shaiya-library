@@ -1,0 +1,9 @@
+# The logging configuration
+[logging]
+format      = "[%datetime{%d/%M/%Y %h:%m:%s,%g}] [%fbase:%line] [%level]: %msg"
+filename    = "Log/Shaiya.log"
+enabled     = true
+
+# The features that should be enabled
+[features]
+synergy     = false

@@ -1,0 +1,18 @@
+# The data for the Plainstrider set
+[set.plainstrider]
+name    = "Plainstrider's Set"
+items   = [ 37005, 37006, 97005 ]
+
+# The bonuses to apply for the 2 piece of Plainstrider
+[set.plainstrider.2]
+str = 20
+hp  = 5000
+
+# The bonuses to apply for the 4 piece of Plainstrider
+[set.plainstrider.4]
+str = 40
+hp  = 6000
+
+[set.chaos]
+name    = "Chaos"
+items   = [ 40255 ]
