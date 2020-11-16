@@ -1,7 +1,8 @@
 #pragma once
 
-#include <shaiya/models/Model.hpp>
 #include <shaiya/models/CItem.hpp>
+#include <shaiya/models/Model.hpp>
+#include <shaiya/models/VariableString.hpp>
 
 #include <array>
 #include <string>
@@ -58,7 +59,7 @@ struct CUser
     unsigned int maxHitpoints;
     unsigned int maxMana;
     unsigned int maxStamina;
-    std::array<char, 32> name;
+    VariableString<32> name;
     PAD(28);
     std::array<CItem*, 24> equipment;
     std::array<std::array<CItem*, 24>, 5> inventory;
@@ -86,5 +87,28 @@ struct CUser
      */
     void sendPoints();
 
+    /**
+     * Gets an item at a specific position.
+     * @param user  The user instance.
+     * @param bag   The bag id.
+     * @param slot  The slot.
+     * @return      The item instance.
+     */
+    CItem* itemAtSlot(int bag, int slot);
+
+    /**
+     * Creates an item for the user.
+     * @param type      The type
+     * @param typeId    The type id.
+     * @param quantity  The number of items to create.
+     */
+    void createItem(int type, int typeId, int quantity = 1);
+
+    /**
+     * Deletes an item at a specified bag and slot
+     * @param bag   The bag
+     * @param slot  The slot
+     */
+    void deleteItem(int bag, int slot);
 };
 #pragma pack(pop)

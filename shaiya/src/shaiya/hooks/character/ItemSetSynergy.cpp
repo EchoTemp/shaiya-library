@@ -1,10 +1,10 @@
+#include <Shlwapi.h>
+#include <logging/log.hpp>
 #include <shaiya/hooks/character/ItemSetSynergy.hpp>
 #include <shaiya/utils/toml.hpp>
-#include <logging/log.hpp>
 
 #include <set>
 #include <vector>
-#include <Shlwapi.h>
 
 /**
  * Initialise the item synergies.
@@ -24,17 +24,17 @@ void ItemSetSynergy::parse(const std::string& path)
 {
     // Parse the synergy file
     auto config = toml::parse_file(path);
-    auto sets = config["set"].as_table();
+    auto sets   = config["set"].as_table();
 
     // Loop through all of the sets
     for (auto&& set: *sets)
     {
-        auto data = *set.second.as_table();
-        auto name = data["name"].value_or("Undefined");
+        auto data  = *set.second.as_table();
+        auto name  = data["name"].value_or("Undefined");
         auto items = data["items"].as_array();
 
         // Assign the set name and worn items
-        Synergy synergy { .name = name };
+        Synergy synergy{ .name = name };
         for (auto i = 0; i < items->size(); i++)
             synergy.items[i] = (*items->get(i)->as_integer()).get();
 
@@ -47,27 +47,24 @@ void ItemSetSynergy::parse(const std::string& path)
                 auto bonuses = *bonus->second.as_table();
 
                 // Parse the bonus status
-                auto strength       = bonuses["str"].value_or(0);
-                auto dexterity      = bonuses["dex"].value_or(0);
-                auto resistance     = bonuses["rec"].value_or(0);
-                auto intelligence   = bonuses["int"].value_or(0);
-                auto wisdom         = bonuses["wis"].value_or(0);
-                auto luck           = bonuses["luc"].value_or(0);
-                auto hitpoints      = bonuses["hp"].value_or(0);
-                auto mana           = bonuses["mp"].value_or(0);
-                auto stamina        = bonuses["sp"].value_or(0);
-                synergy.bonuses[wornCount - 1] = Craftname
-                        {
-                            .strength       = strength,
-                            .dexterity      = dexterity,
-                            .resistance     = resistance,
-                            .intelligence   = intelligence,
-                            .wisdom         = wisdom,
-                            .luck           = luck,
-                            .hitpoints      = hitpoints,
-                            .mana           = mana,
-                            .stamina        = stamina
-                        };
+                auto strength                  = bonuses["str"].value_or(0);
+                auto dexterity                 = bonuses["dex"].value_or(0);
+                auto resistance                = bonuses["rec"].value_or(0);
+                auto intelligence              = bonuses["int"].value_or(0);
+                auto wisdom                    = bonuses["wis"].value_or(0);
+                auto luck                      = bonuses["luc"].value_or(0);
+                auto hitpoints                 = bonuses["hp"].value_or(0);
+                auto mana                      = bonuses["mp"].value_or(0);
+                auto stamina                   = bonuses["sp"].value_or(0);
+                synergy.bonuses[wornCount - 1] = Craftname{ .strength     = strength,
+                                                            .dexterity    = dexterity,
+                                                            .resistance   = resistance,
+                                                            .intelligence = intelligence,
+                                                            .wisdom       = wisdom,
+                                                            .luck         = luck,
+                                                            .hitpoints    = hitpoints,
+                                                            .mana         = mana,
+                                                            .stamina      = stamina };
             }
         }
 
@@ -85,8 +82,8 @@ void ItemSetSynergy::parse(const std::string& path)
  */
 Craftname ItemSetSynergy::parseCraftname(const std::string& input)
 {
-    if (input.empty() || input == "0") // If the string is empty or just contains the number 0
-        return { };
+    if (input.empty() || input == "0")  // If the string is empty or just contains the number 0
+        return {};
 
     // Split the string into a vector, using the delimiter of '|'
     std::vector<std::string> tokens;
@@ -99,16 +96,16 @@ Craftname ItemSetSynergy::parseCraftname(const std::string& input)
     }
 
     // Set the craftname values
-    Craftname craftname { };
-    craftname.strength      = std::stoi(tokens[0]);
-    craftname.dexterity     = std::stoi(tokens[1]);
-    craftname.resistance    = std::stoi(tokens[2]);
-    craftname.intelligence  = std::stoi(tokens[3]);
-    craftname.wisdom        = std::stoi(tokens[4]);
-    craftname.luck          = std::stoi(tokens[5]);
-    craftname.hitpoints     = std::stoi(tokens[6]);
-    craftname.mana          = std::stoi(tokens[7]);
-    craftname.stamina       = std::stoi(tokens[8]);
+    Craftname craftname{};
+    craftname.strength     = std::stoi(tokens[0]);
+    craftname.dexterity    = std::stoi(tokens[1]);
+    craftname.resistance   = std::stoi(tokens[2]);
+    craftname.intelligence = std::stoi(tokens[3]);
+    craftname.wisdom       = std::stoi(tokens[4]);
+    craftname.luck         = std::stoi(tokens[5]);
+    craftname.hitpoints    = std::stoi(tokens[6]);
+    craftname.mana         = std::stoi(tokens[7]);
+    craftname.stamina      = std::stoi(tokens[8]);
     return craftname;
 }
 
@@ -128,15 +125,15 @@ void ItemSetSynergy::applyWornSynergies(CUser* user)
     for (auto&& synergy: wornSynergies)
     {
         addSynergy(user, synergy);
-        user->abilityStr    += synergy.strength;
-        user->abilityDex    += synergy.dexterity;
-        user->abilityRec    += synergy.resistance;
-        user->abilityInt    += synergy.intelligence;
-        user->abilityWis    += synergy.wisdom;
-        user->abilityLuc    += synergy.luck;
-        user->maxHitpoints  += synergy.hitpoints;
-        user->maxMana       += synergy.mana;
-        user->maxStamina    += synergy.stamina;
+        user->abilityStr += synergy.strength;
+        user->abilityDex += synergy.dexterity;
+        user->abilityRec += synergy.resistance;
+        user->abilityInt += synergy.intelligence;
+        user->abilityWis += synergy.wisdom;
+        user->abilityLuc += synergy.luck;
+        user->maxHitpoints += synergy.hitpoints;
+        user->maxMana += synergy.mana;
+        user->maxStamina += synergy.stamina;
     }
 }
 
@@ -149,15 +146,15 @@ void ItemSetSynergy::removeSynergies(CUser* user)
     // Remove all previously applied synergies
     for (auto&& synergy: getAppliedSynergies(user))
     {
-        user->abilityStr    -= synergy.strength;
-        user->abilityDex    -= synergy.dexterity;
-        user->abilityRec    -= synergy.resistance;
-        user->abilityInt    -= synergy.intelligence;
-        user->abilityWis    -= synergy.wisdom;
-        user->abilityLuc    -= synergy.luck;
-        user->maxHitpoints  -= synergy.hitpoints;
-        user->maxMana       -= synergy.mana;
-        user->maxStamina    -= synergy.stamina;
+        user->abilityStr -= synergy.strength;
+        user->abilityDex -= synergy.dexterity;
+        user->abilityRec -= synergy.resistance;
+        user->abilityInt -= synergy.intelligence;
+        user->abilityWis -= synergy.wisdom;
+        user->abilityLuc -= synergy.luck;
+        user->maxHitpoints -= synergy.hitpoints;
+        user->maxMana -= synergy.mana;
+        user->maxStamina -= synergy.stamina;
     }
 
     // Remove the user from the list of applied synergies
@@ -190,7 +187,7 @@ std::vector<Craftname> ItemSetSynergy::getWornSynergies(CUser* user)
     // Loop through all of the synergies
     for (auto&& synergy: synergies)
     {
-        size_t wornCount = 0; // The number of items in this synergy that the player is wearing
+        size_t wornCount = 0;  // The number of items in this synergy that the player is wearing
         for (auto&& id: synergy.items)
         {
             if (equipmentIds.count(id))
@@ -200,10 +197,9 @@ std::vector<Craftname> ItemSetSynergy::getWornSynergies(CUser* user)
         // Add the synergy is the user is wearing two or piece pieces.
         if (wornCount >= 2)
         {
-            LOG(INFO) << user->name.data() << " is found wearing " << wornCount << " pieces of " << synergy.name;
+            LOG(INFO) << user->name << " is found wearing " << wornCount << " pieces of " << synergy.name;
             wornSynergies.push_back(synergy.bonuses[wornCount - 1]);
         }
-
     }
 
     // Return the worn bonuses
@@ -219,7 +215,7 @@ void ItemSetSynergy::addSynergy(CUser* user, Craftname craftname)
 {
     if (appliedSynergies.count(user) == 0)
     {
-        std::vector<Craftname> craftnames { };
+        std::vector<Craftname> craftnames{};
         craftnames.push_back(craftname);
         appliedSynergies[user] = craftnames;
         return;
@@ -236,7 +232,7 @@ void ItemSetSynergy::addSynergy(CUser* user, Craftname craftname)
 std::vector<Craftname> ItemSetSynergy::getAppliedSynergies(CUser* user)
 {
     if (appliedSynergies.count(user) == 0)
-        return { };
+        return {};
 
     return appliedSynergies[user];
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include <shaiya/models/Model.hpp>
+
 #include <array>
 
 /**
@@ -11,5 +12,10 @@ struct CItem
     PAD(64);
     uint8_t type;
     uint8_t typeId;
+
+    int itemId() const
+    {
+        return (type * 1000) + typeId;
+    }
 };
 #pragma pack(pop)
