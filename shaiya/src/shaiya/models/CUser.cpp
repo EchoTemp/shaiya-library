@@ -93,3 +93,18 @@ void CUser::deleteItem(int bag, int slot)
 {
     itemDelete(this, bag, slot, false);
 }
+
+/**
+ * Teleports the player to a destination
+ * @param map   The map id
+ * @param x     The x coordinate
+ * @param z     The z coordinate
+ */
+void CUser::teleport(uint16_t map, float x, float z)
+{
+    teleportType  = 1;
+    teleportMapId = map;
+    teleportDestX = x;
+    teleportDestZ = z;
+    teleportDelay = 1000;  // 1s delay on the teleport
+}

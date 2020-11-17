@@ -1,10 +1,9 @@
 #pragma once
 
+#include <logging/log.hpp>
 #include <shaiya/HookType.hpp>
 #include <shaiya/models/cups/Cups.hpp>
 #include <shaiya/utils/toml.hpp>
-
-#include <logging/log.hpp>
 
 #include <vector>
 
@@ -19,7 +18,6 @@ constexpr const auto CUPS_MEMORY_BLOCK = 0xA00000;
 class World
 {
 public:
-
     /**
      * Initialises the Shaiya server mod.
      * @param config    The configuration table
@@ -65,16 +63,22 @@ public:
     static void sendPacket(CUser* user, void* packet, uint32_t length);
 
     /**
+     * Gets a user for this character id.
+     * @param id    The character id.
+     * @return      The user instance.
+     */
+    static CUser* userForId(uint32_t id);
+
+    /**
      * Gets the custom memory block.
      * @return  The memory block.
      */
     static Cups* cups()
     {
-        return reinterpret_cast<Cups*>(*(int*) CUPS_MEMORY_BLOCK);
+        return reinterpret_cast<Cups*>(*(int*)CUPS_MEMORY_BLOCK);
     }
 
 private:
-
     /**
      * Begins a memory injection.
      * @tparam type The hook type.

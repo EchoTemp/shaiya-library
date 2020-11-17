@@ -26,7 +26,7 @@ typedef void(__thiscall* SConnectionSendFunc)(CUser*, void*, int);
 /**
  * The SConnection::Send function
  */
-SConnectionSendFunc sConnectionSend = (SConnectionSendFunc) SConnectionSendAddress;
+SConnectionSendFunc sConnectionSend = (SConnectionSendFunc)SConnectionSendAddress;
 
 /**
  * Initialises the Shaiya game world mod by setting up various
@@ -37,7 +37,7 @@ void World::init(const toml::table& config)
 {
     // Initialise the custom memory block
     LOG(INFO) << "Populating memory at 0x" << std::uppercase << std::hex << CUPS_MEMORY_BLOCK;
-    *((int*) CUPS_MEMORY_BLOCK) = (int) new Cups();
+    *((int*)CUPS_MEMORY_BLOCK) = (int)new Cups();
 
     // Initialise the hooks
     LOG(INFO) << "Initialising hooks...";
@@ -61,7 +61,7 @@ void World::registerUser(CUser* user)
         // as it's not used by Shaiya, and allows us to very quickly register them.
         if (list->elements[i] == nullptr)
         {
-            user->hg = i;
+            user->hg          = i;
             list->elements[i] = user;
             break;
         }
@@ -82,7 +82,7 @@ void World::deregisterUser(CUser* user)
     auto* list = cups()->userList;
     list->count--;
     list->elements[user->hg] = nullptr;
-    user->hg = 0;
+    user->hg                 = 0;
 
     // Execute the deregistration functions
     for (auto&& func: userDeregisteredFunctors)
@@ -98,4 +98,20 @@ void World::deregisterUser(CUser* user)
 void World::sendPacket(CUser* user, void* packet, uint32_t length)
 {
     sConnectionSend(user, packet, length);
+}
+
+/**
+ * Gets a user for this character id.
+ * @param id    The character id.
+ * @return      The user instance.
+ */
+CUser* World::userForId(uint32_t id)
+{
+    auto* list = cups()->userList;
+    for (auto&& user: list->elements)
+    {
+        if (user && user->charId == id)
+            return user;
+    }
+    return nullptr;
 }

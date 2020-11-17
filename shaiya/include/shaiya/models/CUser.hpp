@@ -1,6 +1,8 @@
 #pragma once
 
+#include <shaiya/models/CGuild.hpp>
 #include <shaiya/models/CItem.hpp>
+#include <shaiya/models/CParty.hpp>
 #include <shaiya/models/Model.hpp>
 #include <shaiya/models/VariableString.hpp>
 
@@ -75,6 +77,96 @@ struct CUser
     unsigned int hitpoints;
     unsigned int mana;
     unsigned int stamina;
+    PAD(24);
+    unsigned int regenHitpoints;  // The amount of hitpoints the user will regenerate on the next tick
+    unsigned int regenMana;
+    unsigned int regenStamina;
+    PAD(128);
+    unsigned int attackPowerAdd;  // The additional attack power added to the user by abilities and lapis
+    PAD(8);
+    unsigned int attackRange;  // The attack range of the user.
+    unsigned int attackSpeed;  // The attack speed of the user.
+    unsigned int abilityMoveSpeed;
+    unsigned int abilityCritChance;
+    unsigned int potentialMotive;
+    PAD(8);
+    unsigned int numBagsUnlocked;
+    PAD(116);
+    unsigned int abilityHitChance;
+    unsigned int abilityAttackPower;
+    unsigned int abilityPhysicalEvasion;
+    unsigned int abilityPhysicalDefenceReduction;
+    PAD(4);
+    unsigned int abilityRangeAttackPower;
+    unsigned int abilityRangeEvasion;
+    unsigned int abilityRangeDefenceReduction;
+    unsigned int abilityMagicHitChance;
+    unsigned int abilityMagicAttackPower;
+    PAD(4);
+    unsigned int abilityMagicResist;
+    unsigned int abilityDarknessBlow;
+    PAD(20);
+    unsigned int minPhysicalAttack;
+    PAD(4);
+    unsigned int physicalDefence;
+    PAD(8);
+    unsigned int abilityDarknessBlow2;
+    PAD(20);
+    unsigned int minRangeAttack;
+    PAD(4);
+    unsigned int rangedDefence;
+    PAD(8);
+    unsigned int abilitySilentBlow;
+    PAD(20);
+    unsigned int minMagicAttack;
+    PAD(4);
+    unsigned int magicResist;
+    PAD(20);
+    bool isDead;
+    PAD(7);
+    unsigned char movementStatus;
+    PAD(935);
+    CParty* party;
+    PAD(8);
+    unsigned int guildId;
+    unsigned int guildRank;
+    PAD(8);
+    CGuild* guild;
+    PAD(15728);
+    unsigned long lastEnterGrbTick;
+    PAD(632);
+    unsigned long sessionId;
+    PAD(4);
+    unsigned int adminStatus;
+    PAD(8);
+    bool isVisible;
+    bool isAttackable;
+    PAD(22);
+    unsigned int userId;
+    PAD(4);
+    VariableString<21> username;
+    PAD(107);
+    unsigned int teleportType;
+    unsigned int teleportDelay;
+    unsigned int teleportMapId;
+    float teleportDestX;
+    float teleportDestY;
+    float teleportDestZ;
+    PAD(128);
+    unsigned int abilityCharm;
+    unsigned int abilityExtraGold;
+    unsigned int abilityEndurance;
+    unsigned int abilityPreventExpLoss;
+    unsigned int abilityPreventItemDrop;
+    unsigned int abilityPreventEquipDrop;
+    unsigned int abilityWarehouseRecall;
+    unsigned int abilityDoubleWarehouse;
+    unsigned int abilityPvpExp;
+    PAD(4);
+    unsigned int abilityContiRes;
+    PAD(328);
+    unsigned int points;
+    unsigned int isBuying;
 
     /**
      * Sends a notice message to this user.
@@ -110,5 +202,13 @@ struct CUser
      * @param slot  The slot
      */
     void deleteItem(int bag, int slot);
+
+    /**
+     * Teleports the player to a destination
+     * @param map   The map id
+     * @param x     The x coordinate
+     * @param z     The z coordinate
+     */
+    void teleport(uint16_t map, float x, float z);
 };
 #pragma pack(pop)
