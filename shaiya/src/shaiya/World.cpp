@@ -115,3 +115,27 @@ CUser* World::userForId(uint32_t id)
     }
     return nullptr;
 }
+
+/**
+ * Gets the users that matches a specific vectors.
+ * @param predicate The predicate to match users against.
+ * @return          The matching users.
+ */
+std::vector<CUser*> World::getUser(const std::function<bool(CUser*)>& predicate)
+{
+    std::vector<CUser*> users;
+    auto* list = cups()->userList;
+
+    for (auto&& user: list->elements)
+    {
+        if (users.size() >= list->count)
+            return users;
+
+        if (user && predicate(user))
+        {
+            users.push_back(user);
+        }
+    }
+
+    return users;
+}

@@ -438,6 +438,8 @@
     <Compile Include="Api\Models\Cups.cs" />
     <Compile Include="Api\Models\CupsList.cs" />
     <Compile Include="Api\Models\CUser.cs" />
+    <Compile Include="Api\Models\Http\Response.cs" />
+    <Compile Include="Api\Models\Http\TeleportUserRequest.cs" />
     <Compile Include="Api\Services\GameService.cs" />
     <Compile Include="Api\Startup.cs" />
     <Compile Include="Program.cs" />

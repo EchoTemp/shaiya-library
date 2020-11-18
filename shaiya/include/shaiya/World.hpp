@@ -5,6 +5,7 @@
 #include <shaiya/models/cups/Cups.hpp>
 #include <shaiya/utils/toml.hpp>
 
+#include <functional>
 #include <vector>
 
 /**
@@ -77,6 +78,13 @@ public:
     {
         return reinterpret_cast<Cups*>(*(int*)CUPS_MEMORY_BLOCK);
     }
+
+    /**
+     * Gets the users that matches a specific vectors.
+     * @param predicate The predicate to match users against.
+     * @return          The matching users.
+     */
+    static std::vector<CUser*> getUser(const std::function<bool(CUser*)>& predicate);
 
 private:
     /**

@@ -92,6 +92,21 @@ public:
         return true;
     }
 
+    /**
+     * Checks if another string contains the same data as this one.
+     * @param other The other string.
+     * @return      If the two strings match.
+     */
+    [[nodiscard]] bool operator==(const char* other) const
+    {
+        for (auto i = 0; i < MaxLen; i++)
+        {
+            if (data_.at(i) != other[i])
+                return false;
+        }
+        return true;
+    }
+
 private:
     /**
      * The internal character array of this string.

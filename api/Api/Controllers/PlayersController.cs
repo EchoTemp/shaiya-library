@@ -1,7 +1,8 @@
-﻿using Shaiya.Web.Api.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shaiya.Web.Api.Models;
+using Shaiya.Web.Api.Models.Http;
 using Shaiya.Web.Api.Services;
 using System.Collections.Generic;
-using System.Web.Mvc;
 
 namespace Shaiya.Web.Api.Controllers
 {
@@ -33,6 +34,18 @@ namespace Shaiya.Web.Api.Controllers
         public List<CUser> Index()
         {
             return _service.GetOnlineUsers();
+        }
+
+        /// <summary>
+        /// Teleports a player by name
+        /// </summary>
+        /// <returns>The response message</returns>
+        [HttpPost]
+        [Route("teleport")]
+        public Response Teleport([FromBody] TeleportUserRequest request)
+        {
+            _service.TeleportUserByName(request.Name, request.Map, request.X, request.Z);
+            return new Response { Message = "Success" };
         }
     }
 }

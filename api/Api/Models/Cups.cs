@@ -10,7 +10,12 @@ namespace Shaiya.Web.Api.Models
         /// <summary>
         /// A pointer to the user list.
         /// </summary>
-        public UInt32 UserListPointer { get; set; }
+        public uint UserListPointer { get; set; }
+
+        /// <summary>
+        /// A pointer to the function for teleporting a user by name
+        /// </summary>
+        public uint TeleportUserByName { get; set; }
 
         /// <summary>
         /// Reads this structure from a byte array.
