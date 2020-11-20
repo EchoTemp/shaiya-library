@@ -1,8 +1,13 @@
+#include <shaiya/DbAgent.hpp>
 #include <shaiya/World.hpp>
 #include <shaiya/models/CUser.hpp>
+#include <shaiya/models/db/ItemCraftnameUpdate.hpp>
+#include <shaiya/models/db/ItemLapisUpdate.hpp>
 #include <shaiya/models/packets/AccountPoints.hpp>
 #include <shaiya/models/packets/Notice.hpp>
 #include <shaiya/models/stItemInfo.hpp>
+
+#include <tuple>
 
 /**
  * The address of the function to create an item for a user
@@ -107,4 +112,50 @@ void CUser::teleport(uint16_t map, float x, float z)
     teleportDestX = x;
     teleportDestZ = z;
     teleportDelay = 1000;  // 1s delay on the teleport
+}
+
+/**
+ * Gets the first available slot in the user's inventory.
+ * @return  The first available bag and slot.
+ */
+std::tuple<int, int> CUser::firstFreeSlot()
+{
+    for (int bag = 1; bag <= 5; bag++)
+    {
+        for (int slot = 0; slot <= 23; slot++)
+        {
+            if (itemAtSlot(bag, slot) == nullptr)
+                return { bag, slot };
+        }
+    }
+    return { -1, -1 };
+}
+
+/**
+ * Updates an item at a specific slot.
+ * @param bag   The bag.
+ * @param slot  The slot.
+ */
+void CUser::updateItem(int bag, int slot)
+{
+    auto* item = itemAtSlot(bag, slot);
+    if (!item)
+        return;
+
+    // Update the item's lapis
+    ItemLapisUpdate lapisUpdate;
+    lapisUpdate.userId = userId;
+    lapisUpdate.bag    = bag;
+    lapisUpdate.slot   = slot;
+    lapisUpdate.lapis  = item->lapis;
+    lapisUpdate.money  = this->money;
+    DbAgent::sendPacket(&lapisUpdate, sizeof(lapisUpdate));
+
+    // Update the item's craftname
+    ItemCraftnameUpdate craftnameUpdate;
+    craftnameUpdate.userId    = userId;
+    craftnameUpdate.bag       = bag;
+    craftnameUpdate.slot      = slot;
+    craftnameUpdate.craftname = item->craftname;
+    DbAgent::sendPacket(&craftnameUpdate, sizeof(craftnameUpdate));
 }

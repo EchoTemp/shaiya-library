@@ -1,4 +1,5 @@
 #include <logging/log.hpp>
+#include <shaiya/World.hpp>
 #include <shaiya/hooks/character/ItemCreation.hpp>
 #include <shaiya/models/stItemInfo.hpp>
 #include <shaiya/utils/toml.hpp>
@@ -35,12 +36,14 @@ void ItemCreation::parse(const std::string& path)
     {
         auto data = *combination.second.as_table();
 
+        auto type   = data["type"].value_or(std::string("create"));
         auto first  = data["first"].value_or(0);
         auto second = data["second"].value_or(0);
         auto third  = data["third"].value_or(0);
         auto result = data["result"].value_or(0);
 
         Combination itemCombo{};
+        itemCombo.type   = type == "create" ? CombinationType::Create : CombinationType::Replace;
         itemCombo.first  = first;
         itemCombo.second = second;
         itemCombo.third  = third;
@@ -56,7 +59,7 @@ void ItemCreation::parse(const std::string& path)
  * @param user      The user instance.
  * @param packet    The item creation packet.
  */
-void ItemCreation::create(CUser* user, ItemCreationPacket* packet)
+void ItemCreation::create(CUser* user, ItemCreationRequest* packet)
 {
     for (auto&& bag: packet->bags)
     {
@@ -85,6 +88,8 @@ void ItemCreation::create(CUser* user, ItemCreationPacket* packet)
         if (combination.first == first->itemId() && combination.second == second->itemId() &&
             combination.third == third->itemId())
         {
+            CItem firstCopy(*user->itemAtSlot(packet->bags[0], packet->slots[0]));  // A copy of the first item's values.
+
             for (auto i = 0; i < packet->bags.size(); i++)
                 user->deleteItem(packet->bags[i], packet->slots[i]);
 
@@ -95,11 +100,34 @@ void ItemCreation::create(CUser* user, ItemCreationPacket* packet)
             auto definition = stItemInfo::forId(type, typeId);
             if (definition)
             {
+                auto [resultBag, resultSlot] = user->firstFreeSlot();
                 std::stringstream stream;
                 stream << "Congratulations! You have successfully crafted a " << definition->name << "!";
                 user->sendNotice(stream.str());
 
                 user->createItem(type, typeId);
+                auto resultItem = user->itemAtSlot(resultBag, resultSlot);
+
+                if (combination.type == CombinationType::Replace)
+                {
+                    resultItem->lapis     = firstCopy.lapis;
+                    resultItem->craftname = firstCopy.craftname;
+                }
+
+                // Inform the user of the created item
+                ItemCreationUpdate update;
+                update.bag       = resultBag;
+                update.slot      = resultSlot;
+                update.type      = resultItem->type;
+                update.typeId    = resultItem->typeId;
+                update.endurance = resultItem->endurance;
+                update.lapis     = resultItem->lapis;
+                update.quantity  = resultItem->quantity;
+                update.craftname = resultItem->craftname;
+                World::sendPacket(user, &update, sizeof(update));
+
+                // Update the item in the database
+                user->updateItem(resultBag, resultSlot);
             }
             return;
         }

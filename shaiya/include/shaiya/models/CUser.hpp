@@ -8,6 +8,7 @@
 
 #include <array>
 #include <string>
+#include <tuple>
 
 /**
  * CUser likely stands for character user. This represents an active character instance
@@ -210,5 +211,18 @@ struct CUser
      * @param z     The z coordinate
      */
     void teleport(uint16_t map, float x, float z);
+
+    /**
+     * Gets the first available slot in the user's inventory.
+     * @return  The first available bag and slot.
+     */
+    std::tuple<int, int> firstFreeSlot();
+
+    /**
+     * Updates an item at a specific slot.
+     * @param bag   The bag.
+     * @param slot  The slot.
+     */
+    void updateItem(int bag, int slot);
 };
 #pragma pack(pop)

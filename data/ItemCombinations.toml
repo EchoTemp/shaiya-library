@@ -1,8 +1,9 @@
 [combination.test]
+type = "replace" # Replace the first item rather than creating a new one.
 first = 10065
 second = 10065
 third = 10065
-result = 40255
+result = 10065
 
 [combination.spears]
 first = 6001

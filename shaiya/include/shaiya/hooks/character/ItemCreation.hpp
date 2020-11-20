@@ -20,7 +20,7 @@ public:
      * @param user      The user instance.
      * @param packet    The item creation packet.
      */
-    static void create(CUser* user, ItemCreationPacket* packet);
+    static void create(CUser* user, ItemCreationRequest* packet);
 
 private:
     /**
