@@ -49,9 +49,8 @@ int CommandManager::execute(const char* text, char* output)
     {
         try
         {
-            auto* cmd       = commands_[identifier];
-            auto outputText = cmd->execute(args);
-            output          = "Hey";
+            auto* cmd = commands_[identifier];
+            cmd->execute(args);
             return 1;
         }
         catch (const std::exception& e)
