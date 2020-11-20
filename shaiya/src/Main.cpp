@@ -21,7 +21,8 @@ EXPORT void init()
     Configurations conf;
 
     // Configure the name and log formatting
-    conf.setGlobally(ConfigurationType::Format, logging["format"].value_or("[%datetime{%d/%M/%Y %h:%m:%s,%g}] [%fbase:%line] [%level]: %msg"));
+    conf.setGlobally(ConfigurationType::Format,
+                     logging["format"].value_or("[%datetime{%d/%M/%Y %h:%m:%s,%g}] [%fbase:%line] [%level]: %msg"));
     conf.setGlobally(ConfigurationType::Filename, logging["filename"].value_or("Log/Shaiya.log"));
     conf.setGlobally(ConfigurationType::Enabled, logging["enabled"].value_or(false) ? "true" : "false");
 

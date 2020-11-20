@@ -1,6 +1,7 @@
 #include <Shlwapi.h>
 #include <logging/log.hpp>
 #include <shaiya/hooks/character/ItemSetSynergy.hpp>
+#include <shaiya/utils/NumberConversion.hpp>
 #include <shaiya/utils/toml.hpp>
 
 #include <set>
@@ -42,7 +43,7 @@ void ItemSetSynergy::parse(const std::string& path)
         for (auto bonus = data.begin(); bonus != data.end(); bonus++)
         {
             int32_t wornCount;
-            if (StrToIntEx(bonus->first.c_str(), STIF_SUPPORT_HEX, &wornCount))
+            if (shaiya::stoi(bonus->first, wornCount))
             {
                 auto bonuses = *bonus->second.as_table();
 

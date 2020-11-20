@@ -7,20 +7,16 @@ add_library(shaiya SHARED ${SRC})
 # Define the include directories
 target_include_directories(shaiya
         PUBLIC
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
         PRIVATE
-                src)
+        src)
 
 # Define the linking language
 set_target_properties(shaiya PROPERTIES LINKER_LANGUAGE CXX)
 
 # Define the MSVC library runtime to use
 set_property(TARGET shaiya PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
-
-# Link the library
-target_link_libraries(shaiya
-        Shlwapi.lib)
 
 # Add custom definitions
 add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
